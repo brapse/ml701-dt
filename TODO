@@ -1,0 +1,9 @@
+Build a decision tree:
+
+* Grow a tree based on information gain
+* Prune a tree based on a validation set
+
+Classification:
+===============
+
+Based on the mushroom dataset, classify the mushroom as poisonous or not based on it's 27 multinomial attributes
