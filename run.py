@@ -3,40 +3,8 @@
 from dt import DecisionTree
 
 class Reader():
-    def __init__(self, file)
+    def __init__(self, file):
         pass
-
-class VariableIndex(object):
-    def __init__(self, examples):
-        self.variables = {}
-        for example in examples:
-            for attribute, value in example:
-                if self.variables.has_key(attribute):
-                    if not value in self.variables[attribute]:
-                        self.variables[attribute].append(value)
-                else:
-                    self.variables[attribute] = [value]
-
-    def __getattribute__(self, name):
-       return self.variables[name] 
-
-
-class CountIndex():
-    def __init__(self, examples):
-        for example in examples:
-            for var, val in example.items():
-                if self.values.has_key(var):
-                    self.values[var] = self.values[var] + 1
-                else: 
-                    self.values[var] = 1
-
-    def __getattribute__(self, name):
-        self.variables[name]
-
-
-
-
-classifier = DicisionTree()
 
 def train(file):
     print "Training: %s" % file

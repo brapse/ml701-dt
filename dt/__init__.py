@@ -62,7 +62,7 @@ class Node(object):
     @property
     def attributes(self):
         """ RETURN a set of tuples of keys and values for each attributes """
-        if self._attributes
+        if self._attributes:
             return self._attributes
         
         attrs = {}
@@ -70,7 +70,7 @@ class Node(object):
         for leaf in self.leaves:
             for attribute, value in leaf:
                 if attrs.has_key(attribute):
-                    if not value in attrs[attribute]
+                    if not value in attrs[attribute]:
                         attrs[attribute.append(value)]
 
                 else:
