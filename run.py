@@ -33,17 +33,63 @@ class CountIndex():
     def __getattribute__(self, name):
         self.variables[name]
 
-#{poisonouse: 0, capshape: 'f', etc}
-class Node():
+
+class Node(object):
     def __init__(self, examples):
-        self.leaves = examples
+        this.children = []
+        this.is_leaf = True
+
+        self.examples = examples
         self._attributes = False
 
     def __len__(self):
         len(self.leaves)
 
+    def pure(self, var):
+        # XXX: This could get expensive
 
-    @attribute
+        instances = set()
+        for example in self.examples:
+            instances.update([example[var]])
+            if len(instances) > 1:
+                return False
+
+        return True
+
+    def classify(self, example, var):
+        """
+        Take an example, and a variable to predict,
+        run it through the decision tree and predict the var of example
+        """
+
+        if self.is_leaf:
+            # return the instance with the highest probability
+            # get 
+            def to_tupple(instance):
+                return [instance, self.prob(var, instance)]
+
+            options = map(to_tupple, self.attributes[var])
+            sort(options, key=lambda x: x[0])
+
+            return options[0]
+        else:
+            for child in self.children:
+                if child.instance == example[var]:
+                    return child.classify(example, var)
+
+
+    def split(self, attr):
+        """
+        split self.examples by attr
+        """
+
+        def only_attr(attr, value):
+            return [x for x in self.examples if x[attr] == value]
+
+        self.children = map(lambda value: Node(only_attr(attr,value)), self.attributes[attr])
+
+
+    @property
     def attributes(self):
         """ RETURN a set of tuples of keys and values for each attributes """
         if self._attributes
@@ -65,28 +111,58 @@ class Node():
         return self._attributes
 
 
-    def information_gain(self, attr):
+    def information_gain(self, var_a, var_b):
         """ 
         Calculate the IG of the leaves accross attr
-        IG(poisonous, attr) = H(poisonous) - H(pointnous|attributes)
+        IG(var_a, var_b) = H(var_a) - H(var_a|var_b)
         """
-        return self.entropy("poisonous") - self.conditional_entropy("poisonous", attr)
+        return self.entropy(var_a) - self.conditional_entropy(var_a, var_b)
 
 
-    def entropy(self, attribute):
+    def entropy(self, var):
         """
         H(X) = sum[p(x)*log(px)]
         """
+        for instance in self.attributes[var]:
+            total = total + self.prob(var, instance)*log2(self.prob(var, instance))
+
+
+    @property
+    def most_ig_var(self):
+        if not self.max_ig:
+            self.max_ig = self.calculate_max_ig()
+
+        return self.max_ig[0]
+
+    @property
+    def most_ig_value(self):
+        if not self.max_ig:
+            self.max_ig = self.calculate_max_ig()
+
+        return self.max_ig[1]
+
+
+    def calculate_max_ig(self):
+        max_ig = ["dunno", 0]
+        for a in self.variables b in at variables if a != v:
+            ig = self.information_gain(a,b)
+            if ig > max_ig[1]:
+                max_ig = ig
+
+        return max_ig
+
 
     def prob(self, variable, value):
         """
         probability of args
         """
+        # this could be fetched from a pre-computed hash
         nume = len([1 for x in self.examples if x[variable] == value])
         return  nume / len(self.examples)
 
 
     def joint_prob(self, v_a, i_a, v_b, i_b):
+        # This is gunna be super slow
         nume = len([1 for x in self.examples if x[v_a] == i_a and x[v_b] == i_b])
 
         return nume / len(self.examples)
@@ -108,7 +184,7 @@ class Node():
 
 
 class DecisionTree():
-    def __init__(examples):
+    def __init__(examples, predict_label, threshold):
         """
         Training
         * Start with a single root node
@@ -125,7 +201,14 @@ class DecisionTree():
                     H(X) = sum[p(x)*log(px)]
                     H(Y|X) sum[p(x,y)*log(p(y)/p(x,y))]
         """
-        self.root = Node(examples)
+        def split(tree, var):
+            sides = tree.split(var)
+
+            for side in tree.split(attr):
+                if not side.pure(predict_label) and side.most_ig_value > threshold:
+                    split(side, tree.most_ig_var)
+
+        root.split(root.most_ig_label)
 
 
     def classify(example):
@@ -133,7 +216,8 @@ class DecisionTree():
         produce a classification based on a the n attributes of example
         """
 
-        pass
+        root.classify(example)
+
 
 classifier = DicisionTree()
 
