@@ -32,8 +32,18 @@ class DecisionTree():
 
         split(self.root, self.root.most_ig_var)
 
+    @property
+    def leaves(self):
+        return self.root.leaves
+
+    @property
+    def children(self):
+        return self.root.children
 
     def prune(self):
+        """
+        Take a tree a remove branches that don't hurt the accuracy too much
+        """
         pass
 
     def classify(self, example, var):
@@ -42,3 +52,28 @@ class DecisionTree():
         """
 
         return self.root.classify(example, var)
+
+    @property
+    def size(self):
+        def get_size(node):
+            if node.leaf:
+                return 1
+            else:
+                return 1 + sum([get_size(child) for child in node.children])
+
+        return get_size(self.root)
+
+
+    def __str__(self):
+        return "<DecisionTree (%d nodes. %d deep)>" % (self.size, self.depth)
+
+
+    @property
+    def depth(self):
+        def get_depth(node, current=0):
+            if node.leaf:
+                return current
+            else:
+                return max([get_depth(child, current+1) for child in node.children])
+
+        return get_depth(self.root, 0)

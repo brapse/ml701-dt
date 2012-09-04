@@ -23,6 +23,21 @@ class Node(object):
         self.max_ig = None
         self.predict_var = 'poisonous'
 
+        self.leaf = True
+
+
+    @property
+    def leaves(self):
+        if self.children:
+            return [child.leaves for child in children]
+        else:
+            return self
+
+
+    def prune(self):
+        self.leaf = True
+        #self.children = []
+
 
     def values(self, var):
         if var in self.variables():
@@ -30,11 +45,14 @@ class Node(object):
         else:
             return set([])
 
+
     def variables(self):
         return set(self.examples.columns)
 
+
     def prob(self, var, value):
         return 1.0 * len(self.examples[self.examples[var] == value]) / len(self.examples)
+
 
     def joint_prob(self, v_a, i_a, v_b, i_b):
         return 1.0 * len(self.examples[(self.examples[v_a] == i_a) & (self.examples[v_b] == i_b)]) / len(self.examples)
@@ -110,10 +128,13 @@ class Node(object):
     
     def split(self, var):
         print "splitting: %s" % len(self.examples)
+
         def only_attr(value):
             return Node(self.examples[self.examples[var] == value], var, value)
 
         self.children = map(only_attr, self.values(var))
+
+        self.leaf = False
 
 
         return self.children
@@ -122,21 +143,26 @@ class Node(object):
         return len(self.values(var)) == 1
 
 
+    def __str__(self):
+        return "<NODE (%s=%s)> %s" % (self.variable, self.value, len(self.children))
+
+
     def classify(self, example, var):
         """
         Take an example, and a variable to predict,
         run it through the decision tree and predict the var of example
         """
 
-        if len(self.children) == 0:
-            if self.prob('poisonous', 1) > self.prob('poisonous', 0):
-                return 1
-            else:
-                return 0
-        else:
+        if not self.leaf:
             for child in self.children:
                 if child.value == example[child.variable]:
                     return child.classify(example, var)
+
+        if self.prob('poisonous', 1) > self.prob('poisonous', 0):
+            return 1
+        else:
+            return 0
+
 
 if __name__ == "__main__":
     # Test
