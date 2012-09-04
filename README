@@ -1,0 +1,21 @@
+DecisionTree
+------------
+
+Assignment #1 for 10-701: http://www.cs.cmu.edu/~tom/10701_sp11/hw/1/hw1.pdf
+
+Results
+-------
+Full tree, unpruned: 
+Tree: <DecisionTree (522 nodes. 9 deep)>
+Training Accuracy:  0.945503
+Testing Accuracy:   0.860094
+
+Pruned tree top down
+<DecisionTree (361 nodes. 9 deep)>
+Training accuracy: 0.933540
+Testing accuracy: 0.874262
+
+Pruned bottom up:
+Tree: <DecisionTree (468 nodes. 9 deep)>
+Training Accuracy: 0.938414
+Testing accuracy Accuracy:  0.869540
